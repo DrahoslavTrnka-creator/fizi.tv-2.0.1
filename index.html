@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<title>FIZI.TV 7.0</title>
+<title>FIZI.TV 8.0</title>
 
 <style>
 body{
@@ -11,15 +11,15 @@ body{
     color:white;
     font-family:Arial;
     overflow:hidden;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
 }
 
 /* MENU */
 #menu{
     text-align:center;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
 }
 
 button{
@@ -43,7 +43,23 @@ iframe{
     display:none;
 }
 
-/* overlay troll */
+/* HOME BUTTON */
+#homeBtn{
+    position:fixed;
+    top:10px;
+    right:10px;
+    z-index:10;
+    padding:10px 15px;
+    border:none;
+    border-radius:10px;
+    background:limegreen;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+    display:none;
+}
+
+/* OVERLAY */
 #overlay{
     position:fixed;
     top:0;
@@ -63,8 +79,10 @@ iframe{
 </head>
 <body>
 
+<button id="homeBtn" onclick="goHome()">🏠 HOME</button>
+
 <div id="menu">
-    <h2>📺 FIZI.TV START</h2>
+    <h2>📺 FIZI.TV MENU</h2>
     <button class="rand" onclick="startRandom()">🎲 RANDOM VIDEO</button>
     <button class="week" onclick="startWeekly()">📅 TÝDENNÍ VIDEO</button>
     <button class="dont" onclick="doNotTouch()">💀 DO NOT TOUCH</button>
@@ -91,26 +109,43 @@ const videos = [
 
 const menu = document.getElementById("menu");
 const player = document.getElementById("player");
+const homeBtn = document.getElementById("homeBtn");
 const overlay = document.getElementById("overlay");
+
+// 🏠 HOME
+function goHome(){
+    player.style.display = "none";
+    player.src = "";
+    menu.style.display = "block";
+    homeBtn.style.display = "none";
+}
+
+// ▶️ show video
+function playVideo(id){
+
+    menu.style.display = "none";
+    overlay.style.display = "none";
+    player.style.display = "block";
+    homeBtn.style.display = "block";
+
+    player.src =
+    `https://www.youtube.com/embed/${id}?autoplay=1&mute=0&loop=1&playlist=${id}`;
+
+    if (player.requestFullscreen) {
+        player.requestFullscreen();
+    }
+}
 
 // 🎲 RANDOM
 function startRandom(){
-
-    menu.style.display = "none";
-    player.style.display = "block";
-
     const id = videos[Math.floor(Math.random()*videos.length)];
-
     playVideo(id);
 }
 
-// 📅 TÝDENNÍ (stabilní výběr)
+// 📅 TÝDENNÍ
 function startWeekly(){
 
-    menu.style.display = "none";
-    player.style.display = "block";
-
-    const week = Math.floor(Date.now() / 604800000); // týden
+    const week = Math.floor(Date.now() / 604800000);
     const index = seededRandom(week) * videos.length | 0;
 
     playVideo(videos[index]);
@@ -124,28 +159,13 @@ function doNotTouch(){
 
     setTimeout(()=>{
 
-        overlay.style.display = "none";
-        player.style.display = "block";
-
         const id = videos[Math.floor(Math.random()*videos.length)];
-
         playVideo(id);
 
     }, 2000);
 }
 
-// ▶️ play function
-function playVideo(id){
-
-    player.src =
-    `https://www.youtube.com/embed/${id}?autoplay=1&mute=0&loop=1&playlist=${id}`;
-
-    if (player.requestFullscreen) {
-        player.requestFullscreen();
-    }
-}
-
-// seed funkce
+// seed
 function seededRandom(seed){
     const x = Math.sin(seed) * 10000;
     return x - Math.floor(x);
