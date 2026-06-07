@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<title>FIZI TV</title>
+<style>
+body{
+    margin:0;
+    background:black;
+}
+iframe{
+    width:100vw;
+    height:100vh;
+    border:none;
+}
+</style>
+</head>
+<body>
+
+<iframe id="player" allowfullscreen></iframe>
+
+<script>
+const videos = [
+    "30AYSN2ZiV0",
+    "GAvk-Z1O7Gs",
+    "G9HDbaEd_Eo",
+    "kiS6vOmX6lI",
+    "deqc2NaxoZ4",
+    "xPpEkRCuun8"
+];
+
+const dayNumber = Math.floor(Date.now() / 86400000);
+
+function seededRandom(seed){
+    const x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+}
+
+const index = Math.floor(
+    seededRandom(dayNumber) * videos.length
+);
+
+const videoId = videos[index];
+
+document.getElementById("player").src =
+`https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}`;
+</script>
+
+</body>
+</html>
