@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<title>FIZI.TV 5.1</title>
+<title>FIZI.TV 7.0</title>
 
 <style>
 body{
@@ -31,8 +31,9 @@ button{
     cursor:pointer;
 }
 
-#startBtn{ background:red; color:white; }
-.opt{ background:orange; }
+.rand{ background:orange; }
+.week{ background:blue; color:white; }
+.dont{ background:red; color:white; }
 
 /* VIDEO */
 iframe{
@@ -41,20 +42,37 @@ iframe{
     border:none;
     display:none;
 }
+
+/* overlay troll */
+#overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+    background:black;
+    color:red;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    font-size:40px;
+    z-index:999;
+}
 </style>
 
 </head>
 <body>
 
 <div id="menu">
-    <button id="startBtn">💀 START (NESAHEJ)</button>
-    <button class="opt" onclick="playToday()">📺 Video dne</button>
-    <button class="opt" onclick="playRandom()">🎲 Random video</button>
+    <h2>📺 FIZI.TV START</h2>
+    <button class="rand" onclick="startRandom()">🎲 RANDOM VIDEO</button>
+    <button class="week" onclick="startWeekly()">📅 TÝDENNÍ VIDEO</button>
+    <button class="dont" onclick="doNotTouch()">💀 DO NOT TOUCH</button>
 </div>
 
-<iframe id="player" allow="autoplay; fullscreen"></iframe>
+<div id="overlay">💀 CHYBA SYSTÉMU...</div>
 
-<audio id="pipeSound" src="https://www.myinstants.com/media/sounds/metal-pipe-falling-sound-effect.mp3"></audio>
+<iframe id="player" allow="autoplay; fullscreen"></iframe>
 
 <script>
 
@@ -73,63 +91,58 @@ const videos = [
 
 const menu = document.getElementById("menu");
 const player = document.getElementById("player");
-const pipeSound = document.getElementById("pipeSound");
+const overlay = document.getElementById("overlay");
 
-// FIX: čekání na DOM (řeší null error)
-window.onload = function(){
-
-    const startBtn = document.getElementById("startBtn");
-
-    startBtn.onclick = function(){
-
-        menu.style.display = "none";
-        player.style.display = "block";
-
-        // 💀 Rickroll jumpscare
-        player.src =
-        "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&playlist=dQw4w9WgXcQ";
-
-        // fullscreen
-        if (player.requestFullscreen) {
-            player.requestFullscreen();
-        }
-
-        // 🔊 sound
-        pipeSound.volume = 1;
-        pipeSound.currentTime = 0;
-        pipeSound.play();
-
-        // po 3s video dne
-        setTimeout(playToday, 3000);
-    };
-};
-
-// 📅 video dne
-function playToday(){
-
-    const dayNumber = Math.floor(Date.now() / 86400000);
-
-    const index = Math.floor(
-        seededRandom(dayNumber) * videos.length
-    );
-
-    loadVideo(videos[index]);
-}
-
-// 🎲 random video
-function playRandom(){
-    const id = videos[Math.floor(Math.random()*videos.length)];
-    loadVideo(id);
-}
-
-// load video
-function loadVideo(id){
+// 🎲 RANDOM
+function startRandom(){
 
     menu.style.display = "none";
     player.style.display = "block";
 
+    const id = videos[Math.floor(Math.random()*videos.length)];
+
+    playVideo(id);
+}
+
+// 📅 TÝDENNÍ (stabilní výběr)
+function startWeekly(){
+
+    menu.style.display = "none";
+    player.style.display = "block";
+
+    const week = Math.floor(Date.now() / 604800000); // týden
+    const index = seededRandom(week) * videos.length | 0;
+
+    playVideo(videos[index]);
+}
+
+// 💀 DO NOT TOUCH
+function doNotTouch(){
+
+    menu.style.display = "none";
+    overlay.style.display = "flex";
+
+    setTimeout(()=>{
+
+        overlay.style.display = "none";
+        player.style.display = "block";
+
+        const id = videos[Math.floor(Math.random()*videos.length)];
+
+        playVideo(id);
+
+    }, 2000);
+}
+
+// ▶️ play function
+function playVideo(id){
+
     player.src =
-    `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}`;
+    `https://www.youtube.com/embed/${id}?autoplay=1&mute=0&loop=1&playlist=${id}`;
+
+    if (player.requestFullscreen) {
+        player.requestFullscreen();
+    }
 }
 
 // seed funkce
@@ -142,3 +155,4 @@ function seededRandom(seed){
 
 </body>
 </html>
+
