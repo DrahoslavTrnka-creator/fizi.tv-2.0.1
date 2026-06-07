@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<title>FIZI.TV 8.1</title>
+<title>FIZI.TV 9.0</title>
 
 <style>
 body{
@@ -41,9 +41,10 @@ iframe{
     height:100vh;
     border:none;
     display:none;
+    transition:0.3s;
 }
 
-/* 🔴 HOME BUTTON VŽDY VIDITELNÝ */
+/* HOME */
 #homeBtn{
     position:fixed;
     top:15px;
@@ -60,8 +61,6 @@ iframe{
     font-size:16px;
 
     cursor:pointer;
-
-    display:block;
     box-shadow:0 0 15px red;
 }
 
@@ -88,7 +87,7 @@ iframe{
 <button id="homeBtn" onclick="goHome()">🏠 HOME</button>
 
 <div id="menu">
-    <h2>📺 FIZI.TV MENU</h2>
+    <h2>📺 FIZI.TV 9.0</h2>
     <button class="rand" onclick="startRandom()">🎲 RANDOM VIDEO</button>
     <button class="week" onclick="startWeekly()">📅 TÝDENNÍ VIDEO</button>
     <button class="dont" onclick="doNotTouch()">💀 DO NOT TOUCH</button>
@@ -125,7 +124,7 @@ function goHome(){
     overlay.style.display = "none";
 }
 
-// ▶️ PLAY VIDEO
+// ▶️ PLAY
 function playVideo(id){
 
     menu.style.display = "none";
@@ -133,7 +132,7 @@ function playVideo(id){
     player.style.display = "block";
 
     player.src =
-    `https://www.youtube.com/embed/${id}?autoplay=1&mute=0&loop=1&playlist=${id}`;
+    `https://www.youtube.com/embed/${id}?autoplay=1&loop=1&playlist=${id}`;
 
     if (player.requestFullscreen) {
         player.requestFullscreen();
@@ -148,25 +147,43 @@ function startRandom(){
 
 // 📅 TÝDENNÍ
 function startWeekly(){
-
     const week = Math.floor(Date.now() / 604800000);
     const index = seededRandom(week) * videos.length | 0;
-
     playVideo(videos[index]);
 }
 
-// 💀 DO NOT TOUCH
+// 💀 DO NOT TOUCH (SAFE CHAOS)
 function doNotTouch(){
 
     menu.style.display = "none";
     overlay.style.display = "flex";
+    overlay.innerText = "💀 SYSTEM ERROR...";
 
     setTimeout(()=>{
 
-        const id = videos[Math.floor(Math.random()*videos.length)];
-        playVideo(id);
+        overlay.style.display = "none";
+        player.style.display = "block";
 
-    }, 2000);
+        const id = "dQw4w9WgXcQ"; // rickroll
+
+        player.src =
+        `https://www.youtube.com/embed/${id}?autoplay=1&loop=1&playlist=${id}`;
+
+        if (player.requestFullscreen) {
+            player.requestFullscreen();
+        }
+
+        // 🎨 vizuální chaos efekt
+        let speed = 1;
+        const fx = setInterval(()=>{
+            speed += 0.4;
+            if(speed > 3) clearInterval(fx);
+
+            player.style.filter =
+            `contrast(${1 + speed}) saturate(${1 + speed}) hue-rotate(${speed*50}deg)`;
+        }, 400);
+
+    }, 1500);
 }
 
 // seed
@@ -179,4 +196,3 @@ function seededRandom(seed){
 
 </body>
 </html>
-
