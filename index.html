@@ -2,18 +2,15 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<title>FIZI.TV 4.0</title>
+<title>FIZI.TV 5.0</title>
 
 <style>
 body{
     margin:0;
     background:black;
-    overflow:hidden;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
+    color:white;
     font-family:Arial;
+    overflow:hidden;
 }
 
 /* VIDEO */
@@ -24,64 +21,40 @@ iframe{
     display:none;
 }
 
-/* START BUTTON */
-#startBtn{
-    width:220px;
-    height:220px;
-    border-radius:50%;
-    background:red;
-    color:white;
-    font-size:28px;
-    font-weight:bold;
-    border:none;
-    cursor:pointer;
-    box-shadow:0 0 40px red;
+/* MENU */
+#menu{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;
 }
 
-/* VOLUME BUTTON */
-#volBtn{
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    background:orange;
-    color:black;
-    font-weight:bold;
+button{
+    display:block;
+    margin:10px auto;
+    padding:15px 25px;
+    font-size:18px;
     border:none;
+    border-radius:10px;
     cursor:pointer;
-    display:none;
 }
 
-/* ESC SCREEN */
-#escScreen{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100vw;
-    height:100vh;
-    background:black;
-    color:white;
-    display:none;
-    justify-content:center;
-    align-items:center;
-    font-size:40px;
-    z-index:999;
-}
+#startBtn{ background:red; color:white; }
+.opt{ background:orange; }
 </style>
 
 </head>
 <body>
 
-<button id="startBtn">NESAHEJ</button>
-<button id="volBtn">🔊 MAX</button>
-
-<div id="escScreen">ESC MODE</div>
+<div id="menu">
+    <button id="startBtn">💀 NESAHEJ (START)</button>
+    <button class="opt" onclick="playToday()">📺 Video dne</button>
+    <button class="opt" onclick="playRandom()">🎲 Náhodné video</button>
+</div>
 
 <iframe id="player" allow="autoplay; fullscreen"></iframe>
 
-<!-- 🔊 METAL PIPE SOUND (kliknutelný) -->
 <audio id="pipeSound" src="https://www.myinstants.com/media/sounds/metal-pipe-falling-sound-effect.mp3"></audio>
 
 <script>
@@ -99,63 +72,58 @@ const videos = [
     "LifQbgwfF5M"
 ];
 
-const dayNumber = Math.floor(Date.now() / 86400000);
+const player = document.getElementById("player");
+const menu = document.getElementById("menu");
+const pipeSound = document.getElementById("pipeSound");
 
+// seed pro "video dne"
 function seededRandom(seed){
     const x = Math.sin(seed) * 10000;
     return x - Math.floor(x);
 }
 
-const index = Math.floor(seededRandom(dayNumber) * videos.length);
-const normalVideo = videos[index];
-
-const player = document.getElementById("player");
-const escScreen = document.getElementById("escScreen");
-const volBtn = document.getElementById("volBtn");
-const pipeSound = document.getElementById("pipeSound");
-
-let maxMode = false;
-
-// START BUTTON
+// START (rickroll + sound)
 document.getElementById("startBtn").onclick = function(){
 
-    this.style.display = "none";
+    menu.style.display = "none";
     player.style.display = "block";
-    volBtn.style.display = "block";
 
-    // 💀 Rickroll jumpscare
     player.src =
-    "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&playlist=dQw4w9WgXcQ&mute=0";
+    "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&playlist=dQw4w9WgXcQ";
 
     if (player.requestFullscreen) player.requestFullscreen();
 
-    // 🔊 metal pipe sound
     pipeSound.volume = 1;
     pipeSound.currentTime = 0;
     pipeSound.play();
-
-    // po 3s normální video
-    setTimeout(()=>{
-        player.src =
-        `https://www.youtube.com/embed/${normalVideo}?autoplay=1&mute=1&loop=1&playlist=${normalVideo}`;
-    }, 3000);
 };
 
-// VOLUME BUTTON
-volBtn.onclick = function(){
+// 📺 video dne
+function playToday(){
 
-    maxMode = !maxMode;
+    const dayNumber = Math.floor(Date.now() / 86400000);
+    const index = Math.floor(seededRandom(dayNumber) * videos.length);
 
-    player.volume = 1;
+    const videoId = videos[index];
 
-    escScreen.style.display = "flex";
+    menu.style.display = "none";
+    player.style.display = "block";
 
-    setTimeout(()=>{
-        escScreen.style.display = "none";
-    }, 800);
+    player.src =
+    `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
+}
 
-    volBtn.innerText = maxMode ? "🔊 100%" : "🔊 MAX";
-};
+// 🎲 random video
+function playRandom(){
+
+    const videoId = videos[Math.floor(Math.random()*videos.length)];
+
+    menu.style.display = "none";
+    player.style.display = "block";
+
+    player.src =
+    `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
+}
 
 </script>
 
