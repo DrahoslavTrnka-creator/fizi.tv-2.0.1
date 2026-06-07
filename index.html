@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<title>FIZI.TV 8.0</title>
+<title>FIZI.TV 8.1</title>
 
 <style>
 body{
@@ -43,20 +43,26 @@ iframe{
     display:none;
 }
 
-/* HOME BUTTON */
+/* 🔴 HOME BUTTON VŽDY VIDITELNÝ */
 #homeBtn{
     position:fixed;
-    top:10px;
-    right:10px;
-    z-index:10;
-    padding:10px 15px;
+    top:15px;
+    right:15px;
+    z-index:99999;
+
+    padding:12px 18px;
     border:none;
-    border-radius:10px;
-    background:limegreen;
-    color:black;
+    border-radius:12px;
+
+    background:red;
+    color:white;
     font-weight:bold;
+    font-size:16px;
+
     cursor:pointer;
-    display:none;
+
+    display:block;
+    box-shadow:0 0 15px red;
 }
 
 /* OVERLAY */
@@ -109,7 +115,6 @@ const videos = [
 
 const menu = document.getElementById("menu");
 const player = document.getElementById("player");
-const homeBtn = document.getElementById("homeBtn");
 const overlay = document.getElementById("overlay");
 
 // 🏠 HOME
@@ -117,16 +122,15 @@ function goHome(){
     player.style.display = "none";
     player.src = "";
     menu.style.display = "block";
-    homeBtn.style.display = "none";
+    overlay.style.display = "none";
 }
 
-// ▶️ show video
+// ▶️ PLAY VIDEO
 function playVideo(id){
 
     menu.style.display = "none";
     overlay.style.display = "none";
     player.style.display = "block";
-    homeBtn.style.display = "block";
 
     player.src =
     `https://www.youtube.com/embed/${id}?autoplay=1&mute=0&loop=1&playlist=${id}`;
