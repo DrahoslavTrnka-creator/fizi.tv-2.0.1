@@ -1,91 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TEST</title>
+</head>
+<body>
+
+<div id="menu">
+<button onclick="start()">START</button>
+</div>
+
+<iframe id="player" width="100%" height="500" style="display:none"></iframe>
+
 <script>
+function start(){
+  document.getElementById("menu").style.display="none";
+  document.getElementById("player").style.display="block";
 
-const videos = [
-    "30AYSN2ZiV0",
-    "GAvk-Z1O7Gs",
-    "G9HDbaEd_Eo",
-    "kiS6vOmX6lI",
-    "deqc2NaxoZ4",
-    "xPpEkRCuun8",
-    "-RcR8TPn-6I",
-    "EdwnJmHpqRw",
-    "KOwwU_HzJio",
-    "LifQbgwfF5M"
-];
-
-const player = document.getElementById("player");
-const menu = document.getElementById("menu");
-const pipeSound = document.getElementById("pipeSound");
-
-let locked = false;
-
-// seed
-function seededRandom(seed){
-    const x = Math.sin(seed) * 10000;
-    return x - Math.floor(x);
+  document.getElementById("player").src =
+  "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
 }
-
-// 🔴 START (LOCK MODE ON)
-document.getElementById("startBtn").onclick = function(){
-
-    menu.style.display = "none";
-    player.style.display = "block";
-
-    locked = true;
-
-    player.src =
-    "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&playlist=dQw4w9WgXcQ";
-
-    enterFullscreen();
-
-    pipeSound.volume = 1;
-    pipeSound.play();
-};
-
-// 📺 video dne
-function playToday(){
-
-    const dayNumber = Math.floor(Date.now() / 86400000);
-    const index = Math.floor(seededRandom(dayNumber) * videos.length);
-
-    loadVideo(videos[index]);
-}
-
-// 🎲 random
-function playRandom(){
-    loadVideo(videos[Math.floor(Math.random()*videos.length)]);
-}
-
-// load video
-function loadVideo(id){
-
-    menu.style.display = "none";
-    player.style.display = "block";
-
-    player.src =
-    `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}`;
-
-    enterFullscreen();
-}
-
-// fullscreen + lock re-enter
-function enterFullscreen(){
-
-    if (player.requestFullscreen) {
-        player.requestFullscreen();
-    }
-}
-
-// 🔁 když někdo zmáčkne ESC (fullscreen exit)
-document.addEventListener("fullscreenchange", () => {
-
-    if (locked && !document.fullscreenElement) {
-
-        // okamžitě zpátky fullscreen
-        setTimeout(() => {
-            enterFullscreen();
-        }, 300);
-    }
-});
-
 </script>
+
+</body>
+</html>
