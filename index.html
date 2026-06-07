@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<title>FIZI.TV 3.0</title>
+<title>FIZI.TV 4.0</title>
 
 <style>
 body{
@@ -13,9 +13,10 @@ body{
     justify-content:center;
     align-items:center;
     height:100vh;
+    font-family:Arial;
 }
 
-/* video */
+/* VIDEO */
 iframe{
     width:100vw;
     height:100vh;
@@ -23,7 +24,7 @@ iframe{
     display:none;
 }
 
-/* start tlačítko */
+/* START BUTTON */
 #startBtn{
     width:220px;
     height:220px;
@@ -31,12 +32,13 @@ iframe{
     background:red;
     color:white;
     font-size:28px;
+    font-weight:bold;
     border:none;
     cursor:pointer;
     box-shadow:0 0 40px red;
 }
 
-/* volume button */
+/* VOLUME BUTTON */
 #volBtn{
     position:fixed;
     bottom:20px;
@@ -52,7 +54,7 @@ iframe{
     display:none;
 }
 
-/* ESC fake screen */
+/* ESC SCREEN */
 #escScreen{
     position:fixed;
     top:0;
@@ -61,10 +63,10 @@ iframe{
     height:100vh;
     background:black;
     color:white;
-    font-size:40px;
     display:none;
     justify-content:center;
     align-items:center;
+    font-size:40px;
     z-index:999;
 }
 </style>
@@ -79,10 +81,8 @@ iframe{
 
 <iframe id="player" allow="autoplay; fullscreen"></iframe>
 
-<!-- METAL PIPE SOUND -->
-<iframe width="110" height="200"
-src="https://www.myinstants.com/instant/metal-pipe-falling-sound-effect-7737/embed/"
-frameborder="0"></iframe>
+<!-- 🔊 METAL PIPE SOUND (kliknutelný) -->
+<audio id="pipeSound" src="https://www.myinstants.com/media/sounds/metal-pipe-falling-sound-effect.mp3"></audio>
 
 <script>
 
@@ -107,50 +107,54 @@ function seededRandom(seed){
 }
 
 const index = Math.floor(seededRandom(dayNumber) * videos.length);
-
 const normalVideo = videos[index];
 
 const player = document.getElementById("player");
 const escScreen = document.getElementById("escScreen");
 const volBtn = document.getElementById("volBtn");
+const pipeSound = document.getElementById("pipeSound");
 
-let isMax = false;
+let maxMode = false;
 
-// START
+// START BUTTON
 document.getElementById("startBtn").onclick = function(){
 
     this.style.display = "none";
     player.style.display = "block";
     volBtn.style.display = "block";
 
-    // rickroll start
+    // 💀 Rickroll jumpscare
     player.src =
     "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&playlist=dQw4w9WgXcQ&mute=0";
 
-    // fullscreen attempt
     if (player.requestFullscreen) player.requestFullscreen();
+
+    // 🔊 metal pipe sound
+    pipeSound.volume = 1;
+    pipeSound.currentTime = 0;
+    pipeSound.play();
+
+    // po 3s normální video
+    setTimeout(()=>{
+        player.src =
+        `https://www.youtube.com/embed/${normalVideo}?autoplay=1&mute=1&loop=1&playlist=${normalVideo}`;
+    }, 3000);
 };
 
 // VOLUME BUTTON
 volBtn.onclick = function(){
 
-    isMax = !isMax;
+    maxMode = !maxMode;
 
-    if(isMax){
-        player.src =
-        player.src + "&autoplay=1&mute=0";
-        volBtn.innerText = "🔊 100%";
-    } else {
-        player.src =
-        player.src.replace("&mute=0","") + "&mute=0";
-        volBtn.innerText = "🔊 MAX";
-    }
+    player.volume = 1;
 
-    // ESC fake screen effect
     escScreen.style.display = "flex";
+
     setTimeout(()=>{
         escScreen.style.display = "none";
     }, 800);
+
+    volBtn.innerText = maxMode ? "🔊 100%" : "🔊 MAX";
 };
 
 </script>
