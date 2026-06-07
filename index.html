@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<title>FIZI.TV 9.0</title>
+<title>FIZI.TV 9.1 FIX</title>
 
 <style>
 body{
@@ -41,7 +41,6 @@ iframe{
     height:100vh;
     border:none;
     display:none;
-    transition:0.3s;
 }
 
 /* HOME */
@@ -87,13 +86,13 @@ iframe{
 <button id="homeBtn" onclick="goHome()">🏠 HOME</button>
 
 <div id="menu">
-    <h2>📺 FIZI.TV 9.0</h2>
+    <h2>📺 FIZI.TV 9.1 FIX</h2>
     <button class="rand" onclick="startRandom()">🎲 RANDOM VIDEO</button>
     <button class="week" onclick="startWeekly()">📅 TÝDENNÍ VIDEO</button>
     <button class="dont" onclick="doNotTouch()">💀 DO NOT TOUCH</button>
 </div>
 
-<div id="overlay">💀 CHYBA SYSTÉMU...</div>
+<div id="overlay">💀 SYSTEM ERROR...</div>
 
 <iframe id="player" allow="autoplay; fullscreen"></iframe>
 
@@ -124,7 +123,7 @@ function goHome(){
     overlay.style.display = "none";
 }
 
-// ▶️ PLAY
+// ▶️ PLAY VIDEO (SAFE MODE)
 function playVideo(id){
 
     menu.style.display = "none";
@@ -132,7 +131,9 @@ function playVideo(id){
     player.style.display = "block";
 
     player.src =
-    `https://www.youtube.com/embed/${id}?autoplay=1&loop=1&playlist=${id}`;
+    `https://www.youtube.com/embed/${id}` +
+    `?autoplay=1&loop=1&playlist=${id}` +
+    `&controls=0&rel=0&modestbranding=1&iv_load_policy=3`;
 
     if (player.requestFullscreen) {
         player.requestFullscreen();
@@ -152,36 +153,29 @@ function startWeekly(){
     playVideo(videos[index]);
 }
 
-// 💀 DO NOT TOUCH (SAFE CHAOS)
+// 💀 DO NOT TOUCH (STABILNÍ VERZE)
 function doNotTouch(){
 
     menu.style.display = "none";
     overlay.style.display = "flex";
-    overlay.innerText = "💀 SYSTEM ERROR...";
+    overlay.innerText = "💀 LOADING SYSTEM...";
 
     setTimeout(()=>{
 
         overlay.style.display = "none";
+
+        const id = "dQw4w9WgXcQ";
+
         player.style.display = "block";
 
-        const id = "dQw4w9WgXcQ"; // rickroll
-
         player.src =
-        `https://www.youtube.com/embed/${id}?autoplay=1&loop=1&playlist=${id}`;
+        `https://www.youtube.com/embed/${id}` +
+        `?autoplay=1&loop=1&playlist=${id}` +
+        `&controls=0&rel=0&modestbranding=1&iv_load_policy=3`;
 
         if (player.requestFullscreen) {
             player.requestFullscreen();
         }
-
-        // 🎨 vizuální chaos efekt
-        let speed = 1;
-        const fx = setInterval(()=>{
-            speed += 0.4;
-            if(speed > 3) clearInterval(fx);
-
-            player.style.filter =
-            `contrast(${1 + speed}) saturate(${1 + speed}) hue-rotate(${speed*50}deg)`;
-        }, 400);
 
     }, 1500);
 }
