@@ -2,46 +2,90 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<title>FIZI.TV 2.0.0</title>
+<title>FIZI.TV 3.0</title>
 
 <style>
 body{
     margin:0;
     background:black;
     overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
 }
 
+/* video */
 iframe{
     width:100vw;
     height:100vh;
     border:none;
+    display:none;
 }
 
-#jumpscareBtn{
-    position:fixed;
-    top:10px;
-    right:10px;
-    z-index:10;
-    padding:10px 15px;
-    font-size:16px;
+/* start tlačítko */
+#startBtn{
+    width:220px;
+    height:220px;
+    border-radius:50%;
     background:red;
     color:white;
+    font-size:28px;
     border:none;
-    border-radius:8px;
     cursor:pointer;
+    box-shadow:0 0 40px red;
+}
+
+/* volume button */
+#volBtn{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    background:orange;
+    color:black;
+    font-weight:bold;
+    border:none;
+    cursor:pointer;
+    display:none;
+}
+
+/* ESC fake screen */
+#escScreen{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+    background:black;
+    color:white;
+    font-size:40px;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
 }
 </style>
 
 </head>
 <body>
 
-<button id="jumpscareBtn">💀 JUMPSCARE</button>
+<button id="startBtn">NESAHEJ</button>
+<button id="volBtn">🔊 MAX</button>
+
+<div id="escScreen">ESC MODE</div>
 
 <iframe id="player" allow="autoplay; fullscreen"></iframe>
 
+<!-- METAL PIPE SOUND -->
+<iframe width="110" height="200"
+src="https://www.myinstants.com/instant/metal-pipe-falling-sound-effect-7737/embed/"
+frameborder="0"></iframe>
+
 <script>
 
-// 🎥 normální FIZI videa
 const videos = [
     "30AYSN2ZiV0",
     "GAvk-Z1O7Gs",
@@ -55,7 +99,6 @@ const videos = [
     "LifQbgwfF5M"
 ];
 
-// 📅 video dne
 const dayNumber = Math.floor(Date.now() / 86400000);
 
 function seededRandom(seed){
@@ -65,28 +108,53 @@ function seededRandom(seed){
 
 const index = Math.floor(seededRandom(dayNumber) * videos.length);
 
-const videoId = videos[index];
+const normalVideo = videos[index];
 
 const player = document.getElementById("player");
+const escScreen = document.getElementById("escScreen");
+const volBtn = document.getElementById("volBtn");
 
-// normální video
-player.src =
-`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
+let isMax = false;
 
-// 💀 JUMPSCARE RICKROLL
-document.getElementById("jumpscareBtn").onclick = function(){
+// START
+document.getElementById("startBtn").onclick = function(){
 
+    this.style.display = "none";
+    player.style.display = "block";
+    volBtn.style.display = "block";
+
+    // rickroll start
     player.src =
-    "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&playlist=dQw4w9WgXcQ";
+    "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&playlist=dQw4w9WgXcQ&mute=0";
 
-    // pokus o fullscreen
-    if (player.requestFullscreen) {
-        player.requestFullscreen();
+    // fullscreen attempt
+    if (player.requestFullscreen) player.requestFullscreen();
+};
+
+// VOLUME BUTTON
+volBtn.onclick = function(){
+
+    isMax = !isMax;
+
+    if(isMax){
+        player.src =
+        player.src + "&autoplay=1&mute=0";
+        volBtn.innerText = "🔊 100%";
+    } else {
+        player.src =
+        player.src.replace("&mute=0","") + "&mute=0";
+        volBtn.innerText = "🔊 MAX";
     }
 
+    // ESC fake screen effect
+    escScreen.style.display = "flex";
+    setTimeout(()=>{
+        escScreen.style.display = "none";
+    }, 800);
 };
 
 </script>
 
 </body>
+</html>
 </html>
