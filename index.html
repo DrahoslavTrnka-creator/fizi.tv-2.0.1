@@ -1,62 +1,3 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-<meta charset="UTF-8">
-<title>FIZI.TV 5.0</title>
-
-<style>
-body{
-    margin:0;
-    background:black;
-    color:white;
-    font-family:Arial;
-    overflow:hidden;
-}
-
-/* VIDEO */
-iframe{
-    width:100vw;
-    height:100vh;
-    border:none;
-    display:none;
-}
-
-/* MENU */
-#menu{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    text-align:center;
-}
-
-button{
-    display:block;
-    margin:10px auto;
-    padding:15px 25px;
-    font-size:18px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-}
-
-#startBtn{ background:red; color:white; }
-.opt{ background:orange; }
-</style>
-
-</head>
-<body>
-
-<div id="menu">
-    <button id="startBtn">💀 NESAHEJ (START)</button>
-    <button class="opt" onclick="playToday()">📺 Video dne</button>
-    <button class="opt" onclick="playRandom()">🎲 Náhodné video</button>
-</div>
-
-<iframe id="player" allow="autoplay; fullscreen"></iframe>
-
-<audio id="pipeSound" src="https://www.myinstants.com/media/sounds/metal-pipe-falling-sound-effect.mp3"></audio>
-
 <script>
 
 const videos = [
@@ -76,25 +17,28 @@ const player = document.getElementById("player");
 const menu = document.getElementById("menu");
 const pipeSound = document.getElementById("pipeSound");
 
-// seed pro "video dne"
+let locked = false;
+
+// seed
 function seededRandom(seed){
     const x = Math.sin(seed) * 10000;
     return x - Math.floor(x);
 }
 
-// START (rickroll + sound)
+// 🔴 START (LOCK MODE ON)
 document.getElementById("startBtn").onclick = function(){
 
     menu.style.display = "none";
     player.style.display = "block";
 
+    locked = true;
+
     player.src =
     "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&loop=1&playlist=dQw4w9WgXcQ";
 
-    if (player.requestFullscreen) player.requestFullscreen();
+    enterFullscreen();
 
     pipeSound.volume = 1;
-    pipeSound.currentTime = 0;
     pipeSound.play();
 };
 
@@ -104,28 +48,44 @@ function playToday(){
     const dayNumber = Math.floor(Date.now() / 86400000);
     const index = Math.floor(seededRandom(dayNumber) * videos.length);
 
-    const videoId = videos[index];
-
-    menu.style.display = "none";
-    player.style.display = "block";
-
-    player.src =
-    `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
+    loadVideo(videos[index]);
 }
 
-// 🎲 random video
+// 🎲 random
 function playRandom(){
+    loadVideo(videos[Math.floor(Math.random()*videos.length)]);
+}
 
-    const videoId = videos[Math.floor(Math.random()*videos.length)];
+// load video
+function loadVideo(id){
 
     menu.style.display = "none";
     player.style.display = "block";
 
     player.src =
-    `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
+    `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}`;
+
+    enterFullscreen();
 }
+
+// fullscreen + lock re-enter
+function enterFullscreen(){
+
+    if (player.requestFullscreen) {
+        player.requestFullscreen();
+    }
+}
+
+// 🔁 když někdo zmáčkne ESC (fullscreen exit)
+document.addEventListener("fullscreenchange", () => {
+
+    if (locked && !document.fullscreenElement) {
+
+        // okamžitě zpátky fullscreen
+        setTimeout(() => {
+            enterFullscreen();
+        }, 300);
+    }
+});
 
 </script>
-
-</body>
-</html>
